@@ -8,7 +8,7 @@ from users.models import User
 def login_view(request):
     #로그인 되어있으면 피드로 보냄
     if request.user.is_authenticated:
-        return redirect('/posts/feeds/')
+        return redirect('posts:feeds')
     
 
     #로그인 되어있지 않으면+요청형식이 포스트일경우
@@ -24,7 +24,7 @@ def login_view(request):
 
             if user: #user가 비어있지 않다면
                 login(request, user)
-                # return redirect('/posts/feeds')
+                return redirect('posts:feeds')
             else:
                 form.add_error(None, '입력한 자격증명에 해당하는 사용자가 없습니다.') #제목은 None인 해당하는 에러를 추가함.
                 print('로그인에 실패했습니다.')
@@ -41,7 +41,7 @@ def login_view(request):
 #로그아웃용 뷰(템플릿 필요없음)
 def logout_view(request):
     logout(request)
-    return redirect('/users/login/')
+    return redirect('users:login')
 
 
 
@@ -56,7 +56,7 @@ def signup(request):
             #유저정보 저장 후 로그인, feed화면으로 보냄.
             user = form.save()
             login(request, user)
-            return redirect('/posts/feeds/') #로그인하면 피드화면으로 보냄
+            return redirect('posts:feeds') #로그인하면 피드화면으로 보냄
 
     else:    
         form = SignupForm()

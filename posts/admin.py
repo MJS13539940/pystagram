@@ -3,9 +3,12 @@ from django.contrib.admin.widgets import AdminFileWidget ##
 from django.db import models                              # admin 썸네일 추가때 씀 
 from django.utils.safestring import mark_safe            ##
 
+from django.db.models import ManyToManyField             # 해시태그용
+from django.forms import CheckboxSelectMultiple          #
+
 import admin_thumbnails
 
-from posts.models import Post, PostImage, Comment
+from posts.models import Post, PostImage, Comment, HashTag
 
 # Register your models here.
 
@@ -43,6 +46,10 @@ class PostAdmin(admin.ModelAdmin):
     list_display = ['id', 'content',]
     # 포스트 내에 두 내용이 포함된다.
     inlines = [CommentInline, PostImageInline,]
+    # admin 의 Posts 목록을 클릭하면 해시태그를 선택할 수 있게 해준다.
+    formfield_overrides = {
+        ManyToManyField: {'widget': CheckboxSelectMultiple},
+    }
 
 
 @admin.register(PostImage)
@@ -53,4 +60,10 @@ class PostImageAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['id', 'post', 'content',]
+
+@admin.register(HashTag)
+class HashTagAdmin(admin.ModelAdmin):
+    # __str__ 로 인해 admin페이지에 해시태그 이름이 표시된다.
+    pass
+
 

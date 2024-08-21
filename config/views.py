@@ -5,7 +5,9 @@ from django.shortcuts import render, redirect
 def index(request):
     #로그인 되어 있다면 보내는 페이지
     if request.user.is_authenticated:
-        return redirect('/posts/feeds/')
+        #동적url 적용함.
+        return redirect('posts:feeds')
     else:
-        return redirect('/users/login')
+        #동적url 적용함.
+        return redirect('users:login')
 

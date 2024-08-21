@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav>
+    <h1>
+        <a href="{% url 'posts:feeds' %}">Pystagram</a>
+    </h1>
+    <a href="{% url 'posts:post_add' %}">Add Post</a>
+    <a href="{% url 'users:logout' %}">Logout</a>
+</nav>
+<div id="tags">
+    <header class="tags-header">
+        <h2>#{{ tag_name }}</h2>
+        <div>게시물 {{ posts.count }}</div>
+    </header>
+    <div class="post-grid-container">
+        {% for post in posts %}
+            {% if post.postimage_set.first and post.postimage_set.first.photo %}
+                <div class="post-grid">
+                    <img src="{{ post.postimage_set.first.photo.url }}" alt=""> <!-- 이미지가 출력이 안되는 브라우저 등일 경우 alt를 사용한다. -->
+                </div>
+            {% else %}
+            <div class="post-grid"></div>
+            {% endif %}
+        {% empty %}
+            <p>검색된 게시물이 없습니다.</p>
+
+        {% endfor %}      
+    </div>
+</div>
+
+{% endblock %}
