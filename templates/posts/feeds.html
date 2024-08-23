@@ -1,86 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'base_slider.html' %}
+{% load custom_tags %}
+
 {% block content %}
-<nav>
-    <h1>
-        <a href="{% url 'posts:feeds' %}">Pystagram</a>
-    </h1>
-    <a href="{% url 'posts:post_add' %}">Add Post</a>
-    <a href="{% url 'users:logout' %}">Logout</a>
-</nav>
+
 <div id="feeds" class="post-container">
     {% for post in posts %}
-    <article id="post-{{ post.id }}" class="post"> <!-- id를 부여해서 원하는 포스트 위치로 갈 수 있게함 -->
-        <header class="post-header">
-            {% if post.user.profile_image %}
-                <img src="{{ post.user.profile_image.url }}">
-            {% endif %}
-            <span>{{ post.user.username }}</span>
-        </header>
-        <!-- 이미지 슬라이드 영역 시작-->
-        <div class="post-images splide">
-            <div class="splide__track">
-                <ul class="splide__list">
-                    {% for image in post.postimage_set.all %}
-                        {% if image.photo %}
-                            <li class="splide__slide">
-                                <img src="{{ image.photo.url }}">
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-        <!-- 이미지 슬라이드 영역 종료-->
-
-        <!-- 글 내용 -->
-        <div class="post-content">
-            {{ post.content|linebreaksbr }}
-            <div class="post-tags"> <!-- 해시태그 적용 -->
-                {% for tag in post.tags.all %}
-                <a href="{% url 'posts:tags' tag_name=tag.name %}">#{{ tag.name }}</a>
-                        <!-- 이러면 posts/tags/tag_name/ 으로 링크가 걸린다. -->
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- 좋아요 -->
-        <div class="post-buttons">
-            <!-- <button>Likes(0)</button> -->
-            <span>Comments({{ post.comment_set.count }})</span>
-        </div>
-
-        <!-- 댓글 & 댓글추+대댓글 -->
-        <div class="post-comments">
-            <ul>
-                {% for comment in post.comment_set.all %}
-                    <li>
-                        <span>{{ comment.user.username }}</span>
-                        <span>{{ comment.content }}</span>
-                        {% if user == comment.user %} <!-- 삭제 가능한 사용자에게만 버튼이 보일것임. -->
-                            <form method="POST" action="{% url 'posts:comment_delete' comment_id=comment.id %}">
-                                {% csrf_token %}
-                                <button type="submit">삭제</button>
-                            </form>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-            <button>Likes(0)</button>
-            <!-- <span>Comment(0)</span> -->
-        </div>
-
-        <!-- 댓글창 -->
-        <small>{{ post.created }}</small>
-        <div class="post-comments-create">
-            <form method="POST" action="{% url 'posts:comment_add' %}"> <!-- (2.1.4) action을 통해 comment_add로 폼의 정보를 보낸다 -->
-                {% csrf_token %}
-                <input type="hidden" name="post" value="{{ post.id }}"> <!-- 사용자가 직접 입력하지 않는 고정된 데이터를 form 내부에 위치 -->
-                {{ comment_form.content }} <!-- 댓글입력용 폼 -->
-                <button type="submit">게시</button> <!-- 교안 수정하기: 교안에 버튼이 form바깥에 있는부분 잘못됨.  -->
-            </form>
-        </div>
-
-    </article>
+        {% url 'posts:feeds' as action_redirect_to %}
+        {% include 'posts/post.html' with action_redirect_url=action_redirect_to|concat:'#post-'|concat:post.id %}
     {% endfor %}
 </div>
 <script>

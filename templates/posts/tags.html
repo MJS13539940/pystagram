@@ -1,12 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'base_nav.html' %}
 {% block content %}
-<nav>
-    <h1>
-        <a href="{% url 'posts:feeds' %}">Pystagram</a>
-    </h1>
-    <a href="{% url 'posts:post_add' %}">Add Post</a>
-    <a href="{% url 'users:logout' %}">Logout</a>
-</nav>
 <div id="tags">
     <header class="tags-header">
         <h2>#{{ tag_name }}</h2>
@@ -16,10 +9,16 @@
         {% for post in posts %}
             {% if post.postimage_set.first and post.postimage_set.first.photo %}
                 <div class="post-grid">
-                    <img src="{{ post.postimage_set.first.photo.url }}" alt=""> <!-- 이미지가 출력이 안되는 브라우저 등일 경우 alt를 사용한다. -->
+                    <a href="{% url 'posts:post_detail' post_id=post.id %}">
+                        <img src="{{ post.postimage_set.first.photo.url }}" alt="">
+                    </a> <!-- 이미지가 출력이 안되는 브라우저 등일 경우 alt를 사용한다. -->
                 </div>
-            {% else %}
-            <div class="post-grid"></div>
+            {% else %} <!-- 빈 이미지를 통해서도 링크를 걸려고 했는데 잘 안되네. -->
+            <div class="post-grid">
+                <a href="{% url 'posts:post_detail' post_id=post.id %}">
+                    <img src="" alt="">
+                </a>
+            </div>
             {% endif %}
         {% empty %}
             <p>검색된 게시물이 없습니다.</p>
